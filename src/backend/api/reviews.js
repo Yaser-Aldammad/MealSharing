@@ -5,11 +5,11 @@ const router = express.Router();
 const postReview = async ({ body }) => {
   const { title, description, meal_id, stars, created_date } = body;
   return await knex("review").insert({
-    title,
-    description,
-    meal_id,
-    stars,
-    created_date,
+    title: title,
+    description: description,
+    meal_id: meal_id,
+    stars: stars,
+    created_date: created_date,
   });
 };
 router.post("/", async (request, response) => {
@@ -63,9 +63,9 @@ router.put("/:id", async (request, response) => {
 });
 const updateReview = async ({ body, id }) => {
   const { title, description, meal_id, stars, created_date } = body;
-  const review = await knex("review").where("id: id").select("*");
+  const review = await knex("review").where({ id: id }).select("*");
   if (review.length === 0) {
-    throw new httperror("bad request", "meal not found: ID ${id}!", 404);
+    throw new HttpError("bad request", `meal not found: ID ${id}!`, 404);
   }
   const queryupdate = ({
     title: title,

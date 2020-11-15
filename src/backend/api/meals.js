@@ -1,4 +1,6 @@
+const { request } = require("express");
 const express = require("express");
+const { count } = require("../database");
 const router = express.Router();
 const knex = require("../database");
 
@@ -24,18 +26,18 @@ const creatNewMeal = async ({ body }) => {
     created_date,
   } = body;
   return await knex("meal").insert({
-    title,
-    description,
-    when,
-    maxNumberOfGuests,
-    price,
-    created_date,
+    title: title,
+    description: description,
+    when: when,
+    maxNumberOfGuests: maxNumberOfGuests,
+    price: price,
+    created_date: created_date,
   });
 };
 // get meal by ID
-const getMealById = async ({ body, id }) => {
+const getMealById = async ({ id, body }) => {
   try {
-    const { title, description, maxNumberOfGuests, createdAt, price } = body;
+    const { title, description, maxNumberOfGuests, created_date, price } = body;
     return await knex("meal")
       .where({
         id: id,
@@ -45,12 +47,12 @@ const getMealById = async ({ body, id }) => {
     console.log("insert a Meal Id");
   }
 };
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (request, response) => {
   getMealById({
-    body: req.body,
-    id: req.params.id,
+    body: request.body,
+    id: request.params.id,
   })
-    .then((result) => res.json(result))
+    .then((result) => response.json(result))
     .catch((error) => {
       response.status(400).send("Bad request").end();
       console.log(error);
@@ -59,12 +61,12 @@ router.get("/:id", async (req, res) => {
 
 // update meal details
 const getUpdatedMeal = async ({ body, id }) => {
-  const { title, description, maxNumberOfGuests, createdAt, price } = body;
+  const { title, description, maxNumberOfGuests, created_date, price } = body;
   const meal = await knex.from("meal").select("*").where({
     id: id,
   });
   if (meal.length === 0) {
-    throw new HttpError("Bad request", `Contact not found: ID ${id}!`, 404);
+    throw new HttpError("write meal id", `Contact not found: ID ${id}!`, 404);
   }
   const queryDto = {
     price: price,
@@ -81,10 +83,10 @@ const getUpdatedMeal = async ({ body, id }) => {
       .update(queryDto);
   } else return "Nothing updated!";
 };
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (request, response) => {
   getUpdatedMeal({
-    body: req.body,
-    id: req.params.id,
+    body: request.body,
+    id: request.params.id,
   })
     .then((result) => res.json(result))
     .catch((error) => {
@@ -141,7 +143,9 @@ const getTitle = async (title) => {
 // ////createdAfter
 const getCreatedAfter = async (createdAfter) => {
   try {
-    return await knex("meal").select("*").where("createdAt", ">", createdAfter);
+    return await knex("meal")
+      .select("*")
+      .where("created_date", ">", createdAfter);
   } catch (error) {
     console.log(error);
   }
@@ -153,6 +157,24 @@ const getLimit = async (limit) => {
     return await knex("meal").select("*").limit(limit);
   } catch (error) {
     console.log(error);
+  }
+};
+
+///availableReservations
+const getAvailableReservations = async (availableReservations) => {
+  if (availableReservations === "true") {
+    try {
+      return await knex("meal")
+        .select("meal.*")
+        .count("reservation.id as number_of_guests")
+        .leftJoin("reservation", "meal.id", "=", "reservation.meal_id")
+        .groupBy("meal.id")
+        .having(knex.raw("meal.maxNumberOFGuests > number_of_guests"));
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    response.status(400).send("Bad request").end();
   }
 };
 
@@ -185,12 +207,20 @@ router.get("/", async (request, response) => {
         response.status(400).send("Bad request").end();
         console.log(ex);
       });
-  }
-  try {
-    const allMEALS = await knex("meal").select("*");
-    response.json(allMEALS);
-  } catch (error) {
-    throw error;
+  } else if (request.query.availableReservations) {
+    getAvailableReservations(request.query.availableReservations)
+      .then((result) => response.json(result))
+      .catch((ex) => {
+        response.status(400).send("Bad request").end();
+        console.log(ex);
+      });
+  } else {
+    try {
+      const allMEALS = await knex("meal").select("*");
+      response.json(allMEALS);
+    } catch (error) {
+      throw error;
+    }
   }
 });
 //exports

@@ -1,4 +1,60 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
-* {
-  font-family: 'Montserrat', sans-serif;
+.form {
+  max-width: 50%;
+  margin: 0 auto;
+  background: rgb(5, 51, 39);
+  padding: 30px;
+  border-radius: 5px;
+  display: block;
+  box-shadow: 0 0 10px;
+}
+/* .input-feilds {
+  display: flex;
+  flex-direction: column;
+  margin-right: 4%;
+  width: 48%;
+} */
+/* .input-feilds .input {
+  margin: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #c5ecfd;
+  padding: 10px;
+  color: #c5ecfd;
+  width: 100%;
+} */
+
+/* .btn {
+  background: #39b7dd;
+  text-align: center;
+  padding: 15px;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  text-transform: uppercase;
+} */
+/* .search-bar {
+  margin: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #c5ecfd;
+  padding: 10px;
+  color: white;
+  width: 100%;
+} */
+/* .search-meal {
+  width: 130px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: rgb(255, 255, 255);
+  background-image: url("searchicon.png");
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  padding: 12px 20px 12px 40px;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+} */
+
+input[type="text"]:focus {
+  width: 100%;
 }
