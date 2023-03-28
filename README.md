@@ -62,5 +62,4 @@ If you go to `http://localhost:3000/` is will throw an error, dont mind this err
 - [Express](https://expressjs.com/) - Server Framework
 - [NodeJs](https://nodejs.org/en/) - Server Environment
 
-## ✍️ Authors <a name = "authors"></a>
-- [@benna100](https://github.com/benna100) - Idea & Initial work
+
